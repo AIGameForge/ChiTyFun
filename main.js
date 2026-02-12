@@ -75,9 +75,10 @@
     lastHudSecond: null, // 用來讓倒數時間每秒更新一次
   };
 
-  // localStorage：改名後沿用舊 key 的資料（避免玩家紀錄消失）
-  const STORAGE_KEY = "chinese_typing_practice:bestTimes:v1";
-  const STORAGE_KEY_OLD = "typing-fall:bestTimes:v1";
+  // localStorage：獨立 repo（ChiTyFun）沿用舊 key 的資料（避免玩家紀錄消失）
+  const STORAGE_KEY = "chityfun:bestTimes:v1";
+  const STORAGE_KEY_OLD = "chinese_typing_practice:bestTimes:v1";
+  const STORAGE_KEY_OLD2 = "typing-fall:bestTimes:v1";
 
   const sfx = (() => {
     /** @type {AudioContext | null} */
@@ -478,8 +479,10 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       const rawOld = localStorage.getItem(STORAGE_KEY_OLD);
+      const rawOld2 = localStorage.getItem(STORAGE_KEY_OLD2);
       const obj = raw ? JSON.parse(raw) : {};
       const objOld = !raw && rawOld ? JSON.parse(rawOld) : null;
+      const objOld2 = !raw && !rawOld && rawOld2 ? JSON.parse(rawOld2) : null;
       // 若新 key 沒資料但舊 key 有，就自動遷移一次
       if (
         (!obj || (typeof obj === "object" && Object.keys(obj).length === 0)) &&
@@ -488,6 +491,14 @@
       ) {
         saveBestTimes(objOld);
         return objOld;
+      }
+      if (
+        (!obj || (typeof obj === "object" && Object.keys(obj).length === 0)) &&
+        objOld2 &&
+        typeof objOld2 === "object"
+      ) {
+        saveBestTimes(objOld2);
+        return objOld2;
       }
       if (!obj || typeof obj !== "object") return {};
       return obj;
